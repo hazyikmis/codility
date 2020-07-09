@@ -715,36 +715,71 @@ Write an efficient algorithm for the following assumptions:
 N is an integer within the range [2..100,000];
 each element of array A is an integer within the range [−10,000..10,000].
 */
-
+//This is 60% success, has performance problems but 100% correct
 function minAvgTwoSlice(A) {
   let avg;
   let prevSum;
-  let minIdx = 1;
+  let minIdx = 0;
   let minAvg = (A[0] + A[1]) / 2;
 
-  for (let i = 1; i < A.length; i++) {
-    prevSum = A[i - 1];
-    //avg = (A[i - 1] + A[i]) / 2; //always starts with 2 elements
-    //console.log("i, prevSum", [i, prevSum]);
-    for (let j = i; j < A.length; j++) {
+  for (let i = 0; i <= A.length-1; i++) {
+    prevSum = A[i];
+    for (let j = i+1; j <= A.length; j++) {
       prevSum = prevSum + A[j];
-      avg = prevSum / (j - i + 2);
-      //console.log("i, j, prevSum, avg, minAvg, minIdx", [i, j, prevSum, avg, minAvg, minIdx]);
+      avg = prevSum / (j - i + 1);
       if (avg < minAvg) {
         minAvg = avg;
-        minIdx = i - 1;
-        //console.log("*** i, j, prevSum, avg, minAvg, minIdx", [i, j, prevSum, avg, minAvg, minIdx]);
+        minIdx = i;
       }
     }
   }
   return minIdx;
 }
 
+//# PassingCars
+//Count the number of passing cars on the road.
+/*
+A non-empty array A consisting of N integers is given. The consecutive elements of array A represent consecutive cars on a road.
+Array A contains only 0s and/or 1s:
+0 represents a car traveling east,
+1 represents a car traveling west.
+The goal is to count passing cars. We say that a pair of cars (P, Q), where 0 ≤ P < Q < N, is passing when P is traveling to the east and Q is traveling to the west.
+For example, consider array A such that:
+  A[0] = 0
+  A[1] = 1
+  A[2] = 0
+  A[3] = 1
+  A[4] = 1
+We have five pairs of passing cars: (0, 1), (0, 3), (0, 4), (2, 3), (2, 4).
+Write a function:
+function solution(A);
+that, given a non-empty array A of N integers, returns the number of pairs of passing cars.
+The function should return −1 if the number of pairs of passing cars exceeds 1,000,000,000.
+For example, given:
+  A[0] = 0
+  A[1] = 1
+  A[2] = 0
+  A[3] = 1
+  A[4] = 1
+the function should return 5, as explained above.
+Write an efficient algorithm for the following assumptions:
+N is an integer within the range [1..100,000];
+each element of array A is an integer that can have one of the following values: 0, 1.
+*/
 
-[1, 2, 2, 5, 1, 5, 8, 4, 2, -2]
+/*
+    // 0 0 1 0 1 0
+    // start from the end
+    // calculate how many 1s after each 0
+    //     2   1 0 <== 1 RAIL (start from right) -- totalOnes
+    // 5 3   1   0 <== 0 RAIL (start from right) -- totalCouples
+    // return 0 RAILs last value: 5
+*/
+function passingCars(A) {
+  let totalCouples = 0;
+  let totalOnes = 0;
+  for (let i=A.length-1; i>=0; i--) 
+    A[i] === 0 ? totalCouples = totalCouples + totalOnes : totalOnes++;
+  return totalCouples > 1000000000 ? -1 : totalCouples;
+}
 
-total 10 (0 <= idx <= 9)
-start   end     total       avg         minIdx
-0       1       1+2=3       3/2=1.5     0
-0       2       1+2+2=5     5/3=1.7     0
-0       3       1+2+2+5=10  10/4=2.5    0
